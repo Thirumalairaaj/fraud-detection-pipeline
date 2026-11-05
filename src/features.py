@@ -32,7 +32,7 @@ def splitFeatures(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 def scaleFeatures() -> ColumnTransformer:
     """Scaling columns"""
     col_transformer = ColumnTransformer(
-        transformers = ["scale", StandardScaler(), SCALE_COLUMNS],
+        transformers = [("scale", StandardScaler(), SCALE_COLUMNS)],
         remainder = "passthrough"
     )
 
