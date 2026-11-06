@@ -16,7 +16,7 @@ from src.features import addFeatures, splitFeatures, scaleFeatures
 logger = logging.getLogger(__name__)
 DATA_PATH = "data/raw/creditcard.csv"
 
-RANDOM_STATE = 42
+RANDOM_STATE = 58
 
 def buildModels() -> dict:
     """returns dict of models"""
@@ -37,7 +37,8 @@ def buildModels() -> dict:
                 ("preprocess",scaleFeatures()),
                 ("classifier", RandomForestClassifier(
                     n_estimators=100, class_weight="balanced_subsample",
-                    n_jobs=1, random_state= RANDOM_STATE
+                    n_jobs=-1, random_state= RANDOM_STATE,
+                    bootstrap=False
                 ))
             ]
         )
