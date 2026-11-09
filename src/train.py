@@ -37,7 +37,7 @@ def buildModels() -> dict:
                 ("preprocess",scaleFeatures()),
                 ("classifier", RandomForestClassifier(
                     n_estimators=100, class_weight="balanced_subsample",
-                    n_jobs=1, random_state= RANDOM_STATE
+                    n_jobs=-1, random_state= RANDOM_STATE
                 ))
             ]
         )
