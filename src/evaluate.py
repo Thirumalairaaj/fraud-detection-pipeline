@@ -21,7 +21,7 @@ def plotPRCurve(score: dict, y_true):
     for name,score in score.items():
         precision, recall, _ = precision_recall_curve(y_true,score)
         average_precision = average_precision_score(y_true,score)
-        ax.plot(recall,precision,label=f"{name} PR-AUC = {average_precision:.3f}")
+        ax.step(recall,precision,where="post",fmt='ob--',label=f"{name} PR-AUC = {average_precision:.3f}")
 
     ax.axhline(y_true.mean(),linestyle="--", color="grey", label = "no-skill baseline")
     ax.set_xlabel("Recall")
@@ -66,7 +66,7 @@ def evaluateModel(model, X_test, y_test) -> dict:
 
     y_pred = model.predict(X_test)
     y_score = model.predict_proba(X_test)[:,1]
-    tn,fp,fn,tp = confusion_matrix(y_test,y_pred).ravel()
+    tn,fp,fn,tp = confusion_matrix(y_test,y_pred,labels=[0,1]).ravel()
 
     metrics = {
         "precision": precision_score(y_test,y_pred),
