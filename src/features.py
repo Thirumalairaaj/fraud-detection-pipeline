@@ -5,10 +5,9 @@ import numpy as np
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 
-from src.clean import TARGET, cleanData, loadData
+from src.clean import TARGET, V_COLUMNS,cleanData, loadData
 
-V_COLUMNS = [f"V{i}" for i in range(1,29)]
-SCALE_COLUMNS = ["Amount_log", "Hour"]
+SCALE_COLUMNS = ["Amount_log"]
 FEATURE_COLUMNS = V_COLUMNS + SCALE_COLUMNS
 
 def addFeatures(df: pd.DataFrame) -> pd.DataFrame:
@@ -17,12 +16,15 @@ def addFeatures(df: pd.DataFrame) -> pd.DataFrame:
     df_copy = df.copy()
     df_copy["Amount_log"] = np.log1p(df_copy["Amount"])
 
-    df_copy["Hour"] = (df_copy["Time"] // 3600) % 24
-
     return df_copy
 
+def selectFeatures(df: pd.DataFrame) -> pd.DataFrame:
+    """For API call. Model inputs in fixed order"""
+
+    return df[FEATURE_COLUMNS]
+
 def splitFeatures(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """splitting features and targe"""
+    """splitting features and target"""
 
     X = df[FEATURE_COLUMNS]
     y = df[TARGET]

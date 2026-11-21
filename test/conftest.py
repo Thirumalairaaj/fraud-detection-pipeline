@@ -16,7 +16,8 @@ def raw_df() -> pd.DataFrame:
     n = 25
     rng = np.random.default_rng(0)
     df = pd.DataFrame(rng.normal(size=(n,m)),columns=V_COLUMNS)
-    df.insert(0,"Time",np.arange(n)*1000.0)
+    df.insert(0,"id",range(len(df)))
+    df.insert(1,"Time",np.arange(n)*1000.0)
     df["Amount"] = rng.uniform(0,500,n)
     df["Class"] = class_col 
 

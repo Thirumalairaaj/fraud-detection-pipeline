@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from src.clean import loadData, cleanData 
+from src.clean import loadData, cleanData, validateFeatures
 
 def test_load_data_file_exists_check(tmp_path):
 
@@ -36,12 +36,6 @@ def test_clean_data_amount_col_check(raw_df):
     with pytest.raises(ValueError):
         cleanData(raw_df)
 
-def test_clean_data_time_col_check(raw_df):
-
-    raw_df.loc[7,"Time"] = -1200
-
-    with pytest.raises(ValueError):
-        cleanData(raw_df)
 
 def test_clean_data_duplicate_remove_check(raw_df):
     with_dup = pd.concat([raw_df.iloc[:5],raw_df.iloc[[3]],raw_df.iloc[5:]], ignore_index=True)
@@ -49,6 +43,21 @@ def test_clean_data_duplicate_remove_check(raw_df):
 
     assert len(result) == len(raw_df)
     assert list(result.index) == list(range(len(result)))
+
+    #with same transaction, different id
+    dup = raw_df.iloc[[0]].copy()
+    dup["id"] = 999
+    dup["Time"] = 999
+
+    with_dup = pd.concat([raw_df,dup],ignore_index=True)
+    result = cleanData(with_dup)
+
+    assert len(result) == len(raw_df)
+
+def test_validate_features_accepts_records_without_class(raw_df):
+    df = raw_df.drop(columns=["Class"])
+
+    validateFeatures(df)
 
 def test_clean_data_valid_data_check(raw_df):
     result = cleanData(raw_df)
