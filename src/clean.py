@@ -7,7 +7,9 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 TARGET = "Class"
-EXPECTED_COLUMNS = ["Time"] + [f"V{i}" for i in range(1,29)] + ["Amount", TARGET]
+V_COLUMNS = [f"V{i}" for i in range(1,29)]
+FEATURE_COLUMNS = V_COLUMNS + ["Amount"]
+EXPECTED_COLUMNS = FEATURE_COLUMNS + [TARGET]
 
 def loadData(path) -> pd.DataFrame:
     """ loads the data from given path and converts csv into pandas dataframe"""
@@ -20,32 +22,41 @@ def loadData(path) -> pd.DataFrame:
 
     return df
 
-def validateSchema(df: pd.DataFrame) -> None:
-    missing_columns = set(EXPECTED_COLUMNS) - set(df.columns)
-    if missing_columns:
-        raise ValueError(f"Missing columns in the dataset: {missing_columns}")
+def validateFeatures(df: pd.DataFrame) -> None:
+    """Checks for any transactions. Also, Used by API"""
 
-    if df[EXPECTED_COLUMNS].isnull().any().any():
-        raise ValueError("Dataset contains missing values")
+    missing_cols = set(FEATURE_COLUMNS) - set(df.columns)
 
-    if not (set(df["Class"].unique()) <= {0,1}):
-        raise ValueError("Class should only contain either 0 or 1")
+    if missing_cols:
+        raise ValueError(f"Missing columns: {missing_cols}")
+
+    if df[FEATURE_COLUMNS].isnull().any().any():
+        raise ValueError("Contains Missing values")
 
     if df["Amount"].min() < 0:
         raise ValueError("Amount should not be negative")
 
-    if df["Time"].min() < 0:
-        raise ValueError("Time should not be negative")
+def validateLabelled(df: pd.DataFrame) -> None:
+    validateFeatures(df)
+    if TARGET not in df.columns:
+        raise ValueError(f"Missing column in the dataset: {TARGET}")
+
+    if df[TARGET].isnull().any():
+        raise ValueError("Dataset contains missing values")
+
+    if not (set(df[TARGET].unique()) <= {0,1}):
+        raise ValueError("Class should only contain either 0 or 1")
+
 
 def dropDuplicates(df: pd.DataFrame) -> pd.DataFrame:
     before = len(df)
-    df = df.drop_duplicates().reset_index(drop=True)
+    df = df.drop_duplicates(subset=EXPECTED_COLUMNS).reset_index(drop=True)
     logger.info("Dropped %d duplicate rows",before - len(df))
 
     return df
 
 def cleanData(df: pd.DataFrame) -> pd.DataFrame:
-    validateSchema(df)
+    validateLabelled(df)
 
     return dropDuplicates(df)
 
