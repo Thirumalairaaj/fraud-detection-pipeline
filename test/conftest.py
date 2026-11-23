@@ -22,3 +22,16 @@ def raw_df() -> pd.DataFrame:
     df["Class"] = class_col 
 
     return df
+
+@pytest.fixture
+def labelledData() -> pd.DataFrame:
+    rng = np.random.default_rng(0)
+    y = np.array([0] * 360 + [1] * 40)
+    X = rng.normal(size=(400,28))
+
+    X[y==1,:3] += 2.0
+    df = pd.DataFrame(X,columns=V_COLUMNS)
+    df["Amount"] = rng.uniform(1,500,400)
+    df["Class"] = y
+
+    return df.sample(frac=1,random_state=0).reset_index(drop=True)
