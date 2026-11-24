@@ -6,3 +6,4 @@ notebook/
 reports/
 __pycache__/
 *.ipynb
+models/

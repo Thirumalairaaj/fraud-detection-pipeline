@@ -9,3 +9,4 @@ access_token
 .env
 .vscode/
 .venv*/
+models/
