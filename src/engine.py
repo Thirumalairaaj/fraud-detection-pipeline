@@ -8,6 +8,7 @@ from sklearn.pipeline import Pipeline
 from src.clean import loadData, cleanData 
 from src.features import addFeatures, splitFeatures, scaleFeatures 
 from src.evaluate import evaluateModel 
+from src.artifacts import saveEngine
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +52,13 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
 
-    path = sys.argv[1] if len(sys.argv) > 1 else "data/raw/creditcard.csv"
+    path = sys.argv[2] if len(sys.argv) > 2 else "data/raw/creditcard.csv"
+    name = sys.argvp[1] if len(sys.argv) > 1 else "engine_old_v1"
 
     data = loadData(path)
     cleaned_data = cleanData(data)
     engine,metrics = trainEngine(cleaned_data)
+    model_path,meta_path = saveEngine(engine=engine,metrics=metrics,df=cleaned_data,name=name,source=path)
     print("cross-validated F1 at that threshold:", round(float(engine.best_score_), 4))
     print(pd.Series(metrics).round(4))
+    print("Saved: ",model_path,"\n",meta_path)
