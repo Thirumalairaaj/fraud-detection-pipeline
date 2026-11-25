@@ -69,9 +69,9 @@ def evaluateModel(model, X_test, y_test) -> dict:
     tn,fp,fn,tp = confusion_matrix(y_test,y_pred,labels=[0,1]).ravel()
 
     metrics = {
-        "precision": precision_score(y_test,y_pred),
-        "recall": recall_score(y_test,y_pred),
-        "f1": f1_score(y_test,y_pred),
+        "precision": precision_score(y_test,y_pred,zero_division=0),
+        "recall": recall_score(y_test,y_pred,zero_division=0),
+        "f1": f1_score(y_test,y_pred,zero_division=0),
         "pr_auc": average_precision_score(y_test,y_score),
         "roc_auc": roc_auc_score(y_test,y_score),
         "tn": int(tn),

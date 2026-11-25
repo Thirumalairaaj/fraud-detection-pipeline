@@ -1,6 +1,6 @@
 
 .venv/
-data/raw/
+data/
 __pycache__/
 .ipynb_checkpoints/
 .kaggle/
@@ -9,3 +9,5 @@ access_token
 .env
 .vscode/
 .venv*/
+models/
+src/transfer_test.py
